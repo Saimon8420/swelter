@@ -1,0 +1,29 @@
+{
+  "name": "swelter",
+  "version": "1.0.0",
+  "description": "Free public thermal-comfort & heat-safety API — Heat Index, Wind Chill, Humidex, WBGT, UTCI, wet-bulb, dew point and 'feels like', metric or imperial. Pure computation, no API key.",
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "node esbuild.config.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.34.3",
+    "express": "^5.0.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "@types/supertest": "^6.0.2",
+    "esbuild": "^0.24.0",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  }
+}
