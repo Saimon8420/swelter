@@ -1,5 +1,5 @@
 import { cToF, fToC, msToMph, msToKmh } from "../lib/units";
-import { rhToDewPoint } from "../lib/humidity";
+import { rhToDewPoint, vaporPressure } from "../lib/humidity";
 
 // Heat Index — NWS Rothfusz regression (computed in °F, returned in °C).
 export function heatIndex(tC: number, rh: number): { value: number; inRange: boolean } {
@@ -52,4 +52,10 @@ export function wetBulb(tC: number, rh: number): number {
     0.00391838 * Math.pow(rh, 1.5) * Math.atan(0.023101 * rh) -
     4.686035
   );
+}
+
+// Apparent Temperature — Steadman / Australian BoM. wind in m/s (10 m).
+export function apparentTemperature(tC: number, rh: number, windMs: number): number {
+  const e = vaporPressure(tC, rh); // hPa
+  return tC + 0.33 * e - 0.7 * windMs - 4.0;
 }
