@@ -1,4 +1,5 @@
 import { cToF, fToC, msToMph, msToKmh } from "../lib/units";
+import { rhToDewPoint } from "../lib/humidity";
 
 // Heat Index — NWS Rothfusz regression (computed in °F, returned in °C).
 export function heatIndex(tC: number, rh: number): { value: number; inRange: boolean } {
@@ -28,4 +29,27 @@ export function windChill(tC: number, windMs: number): { value: number; inRange:
   const v16 = Math.pow(kmh, 0.16);
   const wc = 13.12 + 0.6215 * tC - 11.37 * v16 + 0.3965 * tC * v16;
   return { value: wc, inRange: true };
+}
+
+// Humidex — Environment Canada (Masterton & Richardson 1979). dewPoint in °C.
+export function humidex(tC: number, dewPointC: number): number {
+  const dp = dewPointC + 273.15; // K
+  const e = 6.11 * Math.exp(5417.7530 * (1 / 273.16 - 1 / dp));
+  return tC + 0.5555 * (e - 10);
+}
+
+// Dew point — Magnus (re-exported for endpoint symmetry).
+export function dewPoint(tC: number, rh: number): number {
+  return rhToDewPoint(tC, rh);
+}
+
+// Wet-bulb temperature — Stull (2011) empirical approximation. °C, RH %.
+export function wetBulb(tC: number, rh: number): number {
+  return (
+    tC * Math.atan(0.151977 * Math.sqrt(rh + 8.313659)) +
+    Math.atan(tC + rh) -
+    Math.atan(rh - 1.676331) +
+    0.00391838 * Math.pow(rh, 1.5) * Math.atan(0.023101 * rh) -
+    4.686035
+  );
 }
