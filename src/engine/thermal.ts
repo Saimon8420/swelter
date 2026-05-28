@@ -1,5 +1,6 @@
 import { cToF, fToC, msToMph, msToKmh } from "../lib/units";
 import { rhToDewPoint, vaporPressure } from "../lib/humidity";
+import { utciApprox } from "./utci";
 
 // Heat Index — NWS Rothfusz regression (computed in °F, returned in °C).
 export function heatIndex(tC: number, rh: number): { value: number; inRange: boolean } {
@@ -73,4 +74,18 @@ export function wbgt(
     return { value: 0.7 * twb + 0.2 * tg + 0.1 * tC, inSun: true };
   }
   return { value: 0.7 * twb + 0.3 * tC, inSun: false };
+}
+
+// UTCI — Bröde et al. (2012). Assumes Tmrt = Ta (no radiation) when
+// meanRadiantTemp is absent. Wind is clamped to the model domain (0.5–17 m/s)
+// inside utciApprox.
+export function utci(
+  tC: number,
+  rh: number,
+  windMs: number,
+  mrtC?: number,
+): { value: number; assumedMrt: boolean } {
+  const assumedMrt = mrtC === undefined;
+  const mrt = assumedMrt ? tC : mrtC!;
+  return { value: utciApprox(tC, mrt, windMs, rh), assumedMrt };
 }
