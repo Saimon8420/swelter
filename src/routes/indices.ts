@@ -58,5 +58,54 @@ export function indexRoutes(): Router {
     res.json({ index: "dew-point", value: formatTemp(value, rd.units), units: rd.units, humidity: round1(rd.rh!), category: band.category, message: band.message, disclaimer: DISCLAIMER });
   });
 
+  r.post("/wet-bulb", (req, res) => {
+    const rd = parseReading(req.body, { requireHumidity: true });
+    const value = wetBulb(rd.tempC, rd.rh!);
+    res.json({
+      index: "wet-bulb",
+      value: formatTemp(value, rd.units),
+      units: rd.units,
+      ...(value >= 31 ? { note: "Approaching the ~35 °C wet-bulb human survivability limit." } : {}),
+      disclaimer: DISCLAIMER,
+    });
+  });
+
+  r.post("/apparent-temperature", (req, res) => {
+    const rd = parseReading(req.body, { requireHumidity: true, requireWind: true });
+    const value = apparentTemperature(rd.tempC, rd.rh!, rd.windMs!);
+    const band = apparentBand(value);
+    res.json({ index: "apparent-temperature", value: formatTemp(value, rd.units), units: rd.units, category: band.category, message: band.message, disclaimer: DISCLAIMER });
+  });
+
+  r.post("/wbgt", (req, res) => {
+    const rd = parseReading(req.body, { requireHumidity: true });
+    const { value, inSun } = wbgt(rd.tempC, rd.rh!, rd.solarRadiation);
+    const band = wbgtBand(value);
+    res.json({
+      index: "wbgt",
+      value: formatTemp(value, rd.units),
+      units: rd.units,
+      category: band.category,
+      message: band.message,
+      ...(inSun ? {} : { assumption: "No solar load (shade WBGT); provide solarRadiation (W·m⁻²) for in-sun values." }),
+      disclaimer: DISCLAIMER,
+    });
+  });
+
+  r.post("/utci", (req, res) => {
+    const rd = parseReading(req.body, { requireHumidity: true, requireWind: true });
+    const { value, assumedMrt } = utci(rd.tempC, rd.rh!, rd.windMs!, rd.mrtC);
+    const band = utciBand(value);
+    res.json({
+      index: "utci",
+      value: formatTemp(value, rd.units),
+      units: rd.units,
+      category: band.category,
+      message: band.message,
+      ...(assumedMrt ? { assumption: "Mean radiant temperature assumed equal to air temperature (no radiation); provide meanRadiantTemp for full UTCI." } : {}),
+      disclaimer: DISCLAIMER,
+    });
+  });
+
   return r;
 }
