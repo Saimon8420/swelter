@@ -59,3 +59,18 @@ export function apparentTemperature(tC: number, rh: number, windMs: number): num
   const e = vaporPressure(tC, rh); // hPa
   return tC + 0.33 * e - 0.7 * windMs - 4.0;
 }
+
+// WBGT — ISO 7243 weightings. Shade default; in-sun when solar load supplied.
+// Tnwb ≈ psychrometric wet-bulb (Stull); Tg ≈ Ta + 0.015·S (simplified estimate).
+export function wbgt(
+  tC: number,
+  rh: number,
+  solarRadiation?: number,
+): { value: number; inSun: boolean } {
+  const twb = wetBulb(tC, rh);
+  if (solarRadiation && solarRadiation > 0) {
+    const tg = tC + 0.015 * solarRadiation;
+    return { value: 0.7 * twb + 0.2 * tg + 0.1 * tC, inSun: true };
+  }
+  return { value: 0.7 * twb + 0.3 * tC, inSun: false };
+}
