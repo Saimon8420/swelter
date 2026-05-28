@@ -39,8 +39,9 @@ describe("UTCI — official reference values (validation gate)", () => {
   // Diverse reference cases (tdb, tr, rh, v → UTCI °C), from the official
   // UTCI validation table shipped with pythermalcomfort's test suite:
   // https://raw.githubusercontent.com/FedericoTartarini/validation-data-comfort-models/main/ts_utci.json
-  // (published tolerance there is ±0.1°C; we assert the looser ±0.6°C required here,
-  //  which comfortably absorbs the Magnus-vs-ISO vapour-pressure difference).
+  // (published tolerance there is ±0.1°C; we assert ±0.2°C here, which
+  //  comfortably absorbs the Magnus-vs-ISO vapour-pressure difference while
+  //  still catching real regressions — observed worst-case diff is ≤0.08°C).
   const cases: Array<{ ta: number; tr: number; rh: number; v: number; exp: number; label: string }> = [
     { ta: 30, tr: 27, rh: 50, v: 1, exp: 29.6, label: "hot, slight negative radiation" },
     { ta: 9, tr: 9, rh: 50, v: 1, exp: 8.7, label: "cold, no radiation delta" },
@@ -52,7 +53,7 @@ describe("UTCI — official reference values (validation gate)", () => {
   ];
   for (const c of cases) {
     it(`${c.label}: utci(${c.ta},${c.tr},${c.v}) ≈ ${c.exp}°C`, () => {
-      expect(Math.abs(utci(c.ta, c.rh, c.v, c.tr).value - c.exp)).toBeLessThanOrEqual(0.6);
+      expect(Math.abs(utci(c.ta, c.rh, c.v, c.tr).value - c.exp)).toBeLessThanOrEqual(0.2);
     });
   }
 });
