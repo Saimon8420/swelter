@@ -48,4 +48,10 @@ describe("POST /humidex & /dew-point", () => {
     const res = await request(app()).post("/dew-point").send({ temperature: 30, humidity: 50 });
     expect(res.body.value).toBeCloseTo(18.4, 0);
   });
+  it("humidex always reports metric even for imperial input", async () => {
+    const res = await request(app()).post("/humidex").send({ temperature: 86, humidity: 70, units: "imperial" });
+    expect(res.status).toBe(200);
+    expect(res.body.units).toBe("metric");
+    expect(res.body.note).toMatch(/celsius/i);
+  });
 });

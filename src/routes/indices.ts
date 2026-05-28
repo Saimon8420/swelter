@@ -48,7 +48,7 @@ export function indexRoutes(): Router {
     const rd = parseReading(req.body, { requireHumidity: true });
     const value = humidex(rd.tempC, rd.dewPointC!);
     const band = humidexBand(value);
-    res.json({ index: "humidex", value: round1(value), units: rd.units, category: band.category, message: band.message, disclaimer: DISCLAIMER });
+    res.json({ index: "humidex", value: round1(value), units: "metric", note: "Humidex is reported on the Celsius scale (no standard Fahrenheit form).", category: band.category, message: band.message, disclaimer: DISCLAIMER });
   });
 
   r.post("/dew-point", (req, res) => {
