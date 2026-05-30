@@ -25,6 +25,13 @@ describe("POST /comfort", () => {
     const res = await request(app()).post("/comfort").send({ temperature: 34, humidity: 65, windSpeed: 2 });
     expect(res.body.assumptions.join(" ")).toMatch(/shade|radiant/i);
   });
+  it("keeps humidex on the Celsius scale (with note) even for imperial units", async () => {
+    const res = await request(app()).post("/comfort").send({ temperature: 86, humidity: 70, windSpeed: 5, units: "imperial" });
+    expect(res.status).toBe(200);
+    expect(res.body.indices["humidex"].note).toMatch(/celsius/i);
+    // Celsius-scale humidex here is ~41; a Fahrenheit conversion would be ~106.
+    expect(res.body.indices["humidex"].value).toBeLessThan(60);
+  });
   it("400 on invalid reading", async () => {
     const res = await request(app()).post("/comfort").send({ temperature: 34, humidity: 200 });
     expect(res.status).toBe(400);
