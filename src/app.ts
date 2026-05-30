@@ -3,6 +3,7 @@ import { rateLimit } from "./middleware/rateLimit";
 import { errorHandler } from "./middleware/errors";
 import { healthRoutes } from "./routes/health";
 import { indexRoutes } from "./routes/indices";
+import { comfortRoutes } from "./routes/comfort";
 
 export function buildApp(): express.Express {
   const app = express();
@@ -11,6 +12,7 @@ export function buildApp(): express.Express {
 
   app.use(healthRoutes());
   app.use(indexRoutes());
+  app.use(comfortRoutes());
 
   app.use(errorHandler); // MUST be last
   return app;
