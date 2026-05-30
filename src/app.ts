@@ -5,6 +5,7 @@ import { healthRoutes } from "./routes/health";
 import { indexRoutes } from "./routes/indices";
 import { comfortRoutes } from "./routes/comfort";
 import { batchRoutes } from "./routes/batch";
+import { metaRoutes } from "./routes/meta";
 
 export function buildApp(): express.Express {
   const app = express();
@@ -15,6 +16,7 @@ export function buildApp(): express.Express {
   app.use(indexRoutes());
   app.use(comfortRoutes());
   app.use(batchRoutes());
+  app.use(metaRoutes());
 
   app.use(errorHandler); // MUST be last
   return app;
