@@ -6,12 +6,15 @@ import { indexRoutes } from "./routes/indices";
 import { comfortRoutes } from "./routes/comfort";
 import { batchRoutes } from "./routes/batch";
 import { metaRoutes } from "./routes/meta";
+import { docsRoutes } from "./docs/scalar";
 
 export function buildApp(): express.Express {
   const app = express();
   app.use(express.json({ limit: "1mb" }));
   app.use(rateLimit());
 
+  app.get("/", (_req, res) => res.redirect("/docs"));
+  app.use(docsRoutes());
   app.use(healthRoutes());
   app.use(indexRoutes());
   app.use(comfortRoutes());
