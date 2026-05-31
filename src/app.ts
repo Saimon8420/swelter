@@ -27,3 +27,9 @@ export function buildApp(): express.Express {
   app.use(errorHandler); // MUST be last
   return app;
 }
+
+// Default export: a built app instance. Vercel's Express framework preset serves
+// this file's default export directly as the serverless function, so it must be a
+// ready Express app (not the factory). buildApp() stays exported for tests/local.
+const app = buildApp();
+export default app;
