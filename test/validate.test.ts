@@ -36,4 +36,13 @@ describe("parseReading", () => {
   it("requires wind when asked", () => {
     expect(() => parseReading({ temperature: 5 }, { requireWind: true })).toThrow(/wind/i);
   });
+  it("rejects inconsistent humidity and dewPoint", () => {
+    expect(() => parseReading({ temperature: 30, humidity: 20, dewPoint: 25 })).toThrow(/humidity|dew ?point/i);
+  });
+  it("accepts consistent humidity and dewPoint", () => {
+    expect(() => parseReading({ temperature: 30, humidity: 50, dewPoint: 18.4 })).not.toThrow();
+  });
+  it("rejects meanRadiantTemp out of range", () => {
+    expect(() => parseReading({ temperature: 30, humidity: 50, meanRadiantTemp: 500 })).toThrow(/radiant/i);
+  });
 });

@@ -10,6 +10,7 @@ import { docsRoutes } from "./docs/scalar";
 
 export function buildApp(): express.Express {
   const app = express();
+  app.set("trust proxy", true);
   app.use(express.json({ limit: "1mb" }));
   app.use(rateLimit());
 
@@ -20,6 +21,8 @@ export function buildApp(): express.Express {
   app.use(comfortRoutes());
   app.use(batchRoutes());
   app.use(metaRoutes());
+
+  app.use((_req, res) => res.status(404).json({ error: "Not found" }));
 
   app.use(errorHandler); // MUST be last
   return app;

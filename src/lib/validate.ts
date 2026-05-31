@@ -48,12 +48,23 @@ export function parseReading(body: unknown, opts: ParseOpts = {}): Reading {
   if (windMs !== undefined && windMs > 120) throw new HttpError(400, "windSpeed out of range");
 
   const mrtC = b.meanRadiantTemp === undefined ? undefined : toC(b.meanRadiantTemp);
+  if (mrtC !== undefined && (mrtC < -90 || mrtC > 150)) {
+    throw new HttpError(400, "meanRadiantTemp out of range (−90…150 °C)");
+  }
 
   let rh = b.humidity;
   let dewPointC = b.dewPoint === undefined ? undefined : toC(b.dewPoint);
 
   if (dewPointC !== undefined && dewPointC > tempC + 0.001) {
     throw new HttpError(400, "dewPoint cannot exceed temperature");
+  }
+  // If the caller supplies both humidity and dewPoint, they must agree — otherwise
+  // different indices would use contradictory moisture. Reject rather than emit inconsistent data.
+  if (rh !== undefined && dewPointC !== undefined) {
+    const expectedDewPoint = rhToDewPoint(tempC, rh);
+    if (Math.abs(dewPointC - expectedDewPoint) > 0.5) {
+      throw new HttpError(400, "humidity and dewPoint are inconsistent; supply only one");
+    }
   }
   // Derive the missing humidity representation.
   if (rh !== undefined && dewPointC === undefined) dewPointC = rhToDewPoint(tempC, rh);
