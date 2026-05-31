@@ -8,6 +8,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "node esbuild.config.mjs",
+    "vercel-build": "node esbuild.config.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
