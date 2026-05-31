@@ -34,7 +34,7 @@ export const openapiSpec = {
       "with safety categories and plain-English guidance. Metric or imperial. Pure computation, no API key. " +
       "Informational only — not medical or occupational-safety advice.",
   },
-  servers: [{ url: "https://swelter.vercel.app", description: "Production" }],
+  servers: [{ url: "https://swelter-dev.vercel.app", description: "Production" }],
   paths: {
     "/heat-index": post("Heat Index (NWS)", "Indices", { temperature: 34, humidity: 65 }),
     "/wind-chill": post("Wind Chill (NWS 2001)", "Indices", { temperature: -8, windSpeed: 6 }),
