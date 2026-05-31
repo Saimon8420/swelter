@@ -1,4 +1,4 @@
-import { cToF, fToC, msToMph, msToKmh } from "../lib/units";
+import { cToF, fToC, msToKmh } from "../lib/units";
 import { rhToDewPoint, vaporPressure } from "../lib/humidity";
 import { utciApprox } from "./utci";
 

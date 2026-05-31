@@ -3,7 +3,7 @@ import { heatIndex, windChill } from "../src/engine/thermal";
 import { cToF, round1 } from "../src/lib/units";
 
 describe("heat index (NWS Rothfusz)", () => {
-  it("≈ 40.6°C (105°F) at 90°F / 70% RH", () => {
+  it("≈ 105.8°F (106°F) at 90°F / 70% RH", () => {
     // NWS chart: 90°F & 70% RH → ~105°F.
     const r = heatIndex(32.2, 70);
     // NWS Rothfusz regression yields ~105.8°F at 90°F/70% RH; the printed NWS chart rounds this to 105°F.

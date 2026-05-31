@@ -45,4 +45,9 @@ describe("POST /utci", () => {
     expect(res.status).toBe(200);
     expect(res.body.assumption).toMatch(/radiant|Tmrt|air temp/i);
   });
+  it("no assumption when meanRadiantTemp is supplied", async () => {
+    const res = await request(app()).post("/utci").send({ temperature: 30, humidity: 50, windSpeed: 1, meanRadiantTemp: 45 });
+    expect(res.status).toBe(200);
+    expect(res.body.assumption).toBeUndefined();
+  });
 });
